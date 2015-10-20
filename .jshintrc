@@ -1,0 +1,13 @@
+{
+	"curly": true,
+	"eqeqeq": true,
+	"forin": true,
+	"globals": {
+		"requireLocal": true	
+	},
+	"latedef": "nofunc",
+	"node": true,
+	"shadow": "outer",
+	"undef": true,
+	"unused": "vars"
+}

@@ -1,0 +1,8 @@
+{
+	"apps": [
+		{
+			"name": "rest-api-template",
+			"script": "app.js"
+		}
+	]
+}
