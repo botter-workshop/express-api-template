@@ -17,18 +17,18 @@ router.post('/auth', middlewares.jsonschema(schema), function (req, res, next) {
     
     orm.User
         .findOne(query)
-        .then(checkLogin)
+        .then(respond)
         .catch(next);
     
-    function checkLogin(row) {
+    function respond(row) {
        var token;        
 
        if (!row) {
            res.sendStatus(404);
        } else {
            if (bcrypt.compareSync(body.secret, row.hash)) {
-               delete row.hash;
-               token = jwt.sign(row, config.settings.secret);
+               row.hash = undefined;
+               token = jwt.sign(row, config.jwt.secret);
                res.json({
                    token: token
                });

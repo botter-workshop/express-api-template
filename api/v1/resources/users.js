@@ -1,8 +1,7 @@
 var bcrypt = require('bcryptjs'),
     router = require('express').Router();
     
-var config = requireLocal('config.json'),
-    orm = requireLocal('lib/orm');
+var orm = requireLocal('lib/orm');
 
 router.post('/users', function (req, res, next) {
     var query = {},
@@ -18,14 +17,15 @@ router.post('/users', function (req, res, next) {
     
     orm.User
         .findOrCreate(query)
-        .spread(findOrCreateCallback)
+        .spread(respond)
         .catch(next);
         
-    function findOrCreateCallback(row, created) {
+    function respond(row, created) {
         if (created) {
-            res.send('Login created'); 
+            row.hash = undefined;
+            res.status(201).send(row);
         } else {
-            res.send('Login exists');
+            res.sendStatus(409);
         }
     }
 });
