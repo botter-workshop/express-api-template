@@ -1,7 +1,7 @@
 var bcrypt = require('bcryptjs'),
     router = require('express').Router();
     
-var orm = requireLocal('lib/orm');
+var models = require('lib/models');
 
 router.post('/users', function (req, res, next) {
     var query = {},
@@ -15,7 +15,7 @@ router.post('/users', function (req, res, next) {
         name: body.name
     };
     
-    orm.User
+    models.User
         .findOrCreate(query)
         .spread(respond)
         .catch(next);

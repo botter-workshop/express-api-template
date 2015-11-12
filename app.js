@@ -1,7 +1,4 @@
-// Local module loader
-global.requireLocal = function(name) {
-    return require(__dirname + '/' + name);
-};
+require('app-module-path').addPath(__dirname);
 
 // NPM modules
 var express = require('express'),
@@ -10,7 +7,13 @@ var express = require('express'),
     bodyParser = require('body-parser');
     	
 // Local modules
-var config = requireLocal('config.json');
+var config = require('config.json');
+
+var env = process.env.NODE_ENV || 'development',
+    environment = config.environments[env];    
+
+// Setup Sequelize
+require('lib/models').init(environment);
     	
 // Setup Express
 var app = express();
@@ -25,12 +28,12 @@ app.use('/api/docs', express.static(__dirname + '/apidoc'));
 // Setup Resources
 app.use('/api/v1', [
     // Anonymous Resources
-	requireLocal('api/v1/resources/auth'),
-	requireLocal('api/v1/resources/users'),
+	require('api/v1/auth'),
+	require('api/v1/users'),
 	// Protected Resources
 	jwt(config.jwt),
 	// Error Handling
-	requireLocal('lib/middlewares').error
+	require('lib/middlewares/error')
 ]);
 
 // Start Express

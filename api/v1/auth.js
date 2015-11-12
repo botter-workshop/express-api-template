@@ -2,12 +2,10 @@ var bcrypt = require('bcryptjs'),
     jwt = require('jsonwebtoken'),
     router = require('express').Router();
     
-var config = requireLocal('config.json'),
-    middlewares = requireLocal('lib/middlewares'),
-    orm = requireLocal('lib/orm'),
-    schema = requireLocal('api/v1/resources/auth.json');
+var config = require('config.json'),
+    models = require('lib/models');
 
-router.post('/auth', middlewares.jsonschema(schema), function (req, res, next) {
+router.post('/auth', function (req, res, next) {
     var query = {},
         body = req.body;
     
@@ -15,7 +13,7 @@ router.post('/auth', middlewares.jsonschema(schema), function (req, res, next) {
         name: body.name
     };
     
-    orm.User
+    models.User
         .findOne(query)
         .then(respond)
         .catch(next);
