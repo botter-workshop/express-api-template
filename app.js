@@ -1,5 +1,3 @@
-require('app-module-path').addPath(__dirname);
-
 // NPM modules
 var express = require('express'),
     jwt = require('express-jwt'),
@@ -7,20 +5,27 @@ var express = require('express'),
     bodyParser = require('body-parser');
     	
 // Local modules
-var config = require('config.json');
+var config = require('./config.json');
 
+// Set the environment configuration
 var env = process.env.NODE_ENV || 'development',
     environment = config.environments[env];    
 
 // Setup Sequelize
-require('lib/models').init(environment);
+require('./lib/models').init(environment);
     	
 // Setup Express
 var app = express();
 
+// Configure CORS and JSON parsing
 app.use(cors());
 app.use(bodyParser.json());
+
+// Disable server signature for security
 app.disable('x-powered-by');
+
+// Add JWT settings for use in middleware
+app.set('jwt', config.jwt);
 
 // Setup Documentation
 app.use('/api/docs', express.static(__dirname + '/apidoc'));
@@ -28,12 +33,12 @@ app.use('/api/docs', express.static(__dirname + '/apidoc'));
 // Setup Resources
 app.use('/api/v1', [
     // Anonymous Resources
-	require('api/v1/auth'),
-	require('api/v1/users'),
+	require('./api/v1/auth'),
+	require('./api/v1/users'),
 	// Protected Resources
 	jwt(config.jwt),
 	// Error Handling
-	require('lib/middlewares/error')
+	require('./lib/middlewares/error')
 ]);
 
 // Start Express

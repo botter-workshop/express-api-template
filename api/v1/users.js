@@ -1,18 +1,18 @@
 var bcrypt = require('bcryptjs'),
     router = require('express').Router();
     
-var models = require('lib/models');
-
+var models = require('../../lib/models');
+    
 router.post('/users', function (req, res, next) {
     var query = {},
         body = req.body;
 
     query.defaults = {
-        hash: bcrypt.hashSync(body.secret, 8)
+        hash: bcrypt.hashSync(body.password, 8)
     };
     
     query.where = {
-        name: body.name
+        username: body.username
     };
     
     models.User

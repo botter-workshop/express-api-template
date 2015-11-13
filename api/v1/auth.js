@@ -2,15 +2,15 @@ var bcrypt = require('bcryptjs'),
     jwt = require('jsonwebtoken'),
     router = require('express').Router();
     
-var config = require('config.json'),
-    models = require('lib/models');
+var models = require('../../lib/models');
 
 router.post('/auth', function (req, res, next) {
     var query = {},
+        app = req.app,
         body = req.body;
     
     query.where = {
-        name: body.name
+        username: body.username
     };
     
     models.User
@@ -19,14 +19,15 @@ router.post('/auth', function (req, res, next) {
         .catch(next);
     
     function respond(row) {
-       var token;        
+       var secret, token;        
 
        if (!row) {
            res.sendStatus(404);
        } else {
-           if (bcrypt.compareSync(body.secret, row.hash)) {
+           if (bcrypt.compareSync(body.password, row.hash)) {
                row.hash = undefined;
-               token = jwt.sign(row, config.jwt.secret);
+               secret = app.get('jwt').secret;
+               token = jwt.sign(row, secret);
                res.json({
                    token: token
                });
